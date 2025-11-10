@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Urban expansion in Asia: Case of Iran, India, Lao PDR, Mongolia, Nepal, Pakistan, the Philippines, Sri Lanka, and Vietnam</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .header {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .org-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .logo {
+        height: 80px;
+        max-width: 200px;
+        object-fit: contain;
+    }
+    
+    .title-section {
+        text-align: center;
+        color: #2c3e50;
+    }
+    
+    .main-title {
+        font-size: 2.2em;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+    
+    .subtitle {
+        font-size: 1.1em;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .date-info {
+        font-size: 0.95em;
+        color: #888;
+    }
+    
+    .global-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card .number {
+        font-size: 2.2em;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 8px;
+    }
+    
+    .stat-card .label {
+        color: #666;
+        font-size: 1em;
+    }
+    
+    #map {
+        width: 100%;
+        height: 600px;
+        border-radius: 15px;
+        border: 3px solid #e9ecef;
+    }
+    
+    .map-container {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .footer {
+        text-align: center;
+        color: white;
+        padding: 30px 0;
+        margin-top: 40px;
+    }
+    
+    .search-controls {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .search-input {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 20px;
+        font-size: 1.1em;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #667eea;
+    }
+    
+    .country-filter {
+        padding: 12px 20px;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+    }
+    </style>
+    </head>
+    <body>
+        <div style="background: #ff9800; color: white; padding: 10px; text-align: center;">
+            Note: Individual city maps are hosted externally. 
+            Click markers to see coordinates and information.
+        </div>
+        <div class="container">
+            <div class="header">
+                <div class="org-logos">
+                </div>
+                <div class="title-section">
+                    <h1 class="main-title">Urban expansion in Asia: Case of Iran, India, Lao PDR, Mongolia, Nepal, Pakistan, the Philippines, Sri Lanka, and Vietnam</h1>
+                    <p class="subtitle">Interactive Map with CSV-Enhanced Coordinates</p>
+                    <p class="date-info">Generated: November 10, 2025</p>
+                </div>
+            </div>
+            
+            <div class="global-stats">
+                <div class="stat-card">
+                    <div class="number">263</div>
+                    <div class="label">Cities Mapped</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">9</div>
+                    <div class="label">Countries Covered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">264</div>
+                    <div class="label">Total HTML Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">263</div>
+                    <div class="label">CSV Matched</div>
+                </div>
+            </div>
+            
+            <div class="search-controls">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="🔍 Search for cities or countries..." 
+                       onkeyup="filterMarkers()">
+                <select class="country-filter" id="countryFilter" onchange="filterByCountry()">
+                    <option value="">All Countries</option><option value="India">🇮🇳 India</option><option value="Iran">🇮🇷 Iran</option><option value="Laos">🇱🇦 Lao PDR</option><option value="Mongolia">🇲🇳 Mongolia</option><option value="Nepal">🇳🇵 Nepal</option><option value="Pakistan">🇵🇰 Pakistan</option><option value="Philippines">🇵🇭 Philippines</option><option value="SriLanka">🇱🇰 Sri Lanka</option><option value="Vietnam">🇻🇳 Vietnam</option>
+                </select>
+            </div>
+            
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 UN-Habitat ROAP & Urban Institute of Kyushu University</p>
+            <p style="margin-top: 15px; opacity: 0.9;">
+                Enhanced with CSV coordinate data for maximum accuracy
+            </p>
+        </div>
+        
+        <script>
+            var map = L.map('map').setView([30.0, 90.0], 4);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            var allMarkers = [];
+            var markerGroup = L.layerGroup().addTo(map);
+            
+            var countryColors = {
+                'India': '#FF6B6B',
+                'Iran': '#4ECDC4', 
+                'Mongolia': '#45B7D1',
+                'Nepal': '#FFA07A',
+                'SriLanka': '#98D8C8',
+                'Pakistan': '#F7DC6F',
+                'Vietnam': '#BB8FCE',
+                'Philippines': '#85C1E9',
+                'Laos': '#F8C471'
+            };
+            
+            var cities = [
+            {
+                name: "Agra",
+                country: "India",
+                lat: 27.18528908,
+                lng: 78.01035983,
+                population: "1,585,704",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Agra 22 Ecosystem", "url": "#ecosystem_maps/India_Agra_22_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Ahmedabad",
+                country: "India",
+                lat: 23.02374922,
+                lng: 72.57056936,
+                population: "5,577,940",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Ahmedabad 4 Ecosystem", "url": "#ecosystem_maps/India_Ahmedabad_4_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Amritsar",
+                country: "India",
+                lat: 31.62416243,
+                lng: 74.87890343,
+                population: "1,132,383",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Amritsar 33 Ecosystem", "url": "#ecosystem_maps/India_Amritsar_33_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Aurangabad",
+                country: "India",
+                lat: 19.8933807,
+                lng: 75.32307136,
+                population: "1,175,116",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Aurangabad 31 Ecosystem", "url": "#ecosystem_maps/India_Aurangabad_31_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Bangalore",
+                country: "India",
+                lat: 12.96395302,
+                lng: 77.58606589,
+                population: "8,443,675",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Bangalore 2 Ecosystem", "url": "#ecosystem_maps/India_Bangalore_2_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Bhopal",
+                country: "India",
+                lat: 23.23601706,
+                lng: 77.40190767,
+                population: "1,798,218",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Bhopal 15 Ecosystem", "url": "#ecosystem_maps/India_Bhopal_15_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Chennai",
+                country: "India",
+                lat: 13.09404146,
+                lng: 80.28154062,
+                population: "4,646,732",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Chennai 5 Ecosystem", "url": "#ecosystem_maps/India_Chennai_5_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Coimbatore",
+                country: "India",
+                lat: 10.99326362,
+                lng: 76.95909118652344,
+                population: "1,050,721",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Coimbatore 40 Ecosystem", "url": "#ecosystem_maps/India_Coimbatore_40_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Delhi",
+                country: "India",
+                lat: 28.65738975,
+                lng: 77.22801741,
+                population: "11,034,555",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Delhi 1 Ecosystem", "url": "#ecosystem_maps/India_Delhi_1_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Dhanbad",
+                country: "India",
+                lat: 23.80436742,
+                lng: 86.4354698,
+                population: "1,162,472",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Dhanbad 32 Ecosystem", "url": "#ecosystem_maps/India_Dhanbad_32_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Faridabad",
+                country: "India",
+                lat: 28.38394058,
+                lng: 77.31415286,
+                population: "1,414,050",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Faridabad 24 Ecosystem", "url": "#ecosystem_maps/India_Faridabad_24_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Ghaziabad",
+                country: "India",
+                lat: 28.67091924,
+                lng: 77.42868082,
+                population: "1,648,643",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Ghaziabad 20 Ecosystem", "url": "#ecosystem_maps/India_Ghaziabad_20_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Gwalior",
+                country: "India",
+                lat: 26.20952759,
+                lng: 78.16621451,
+                population: "1,054,420",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Gwalior 39 Ecosystem", "url": "#ecosystem_maps/India_Gwalior_39_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Howrah",
+                country: "India",
+                lat: 22.58211481,
+                lng: 88.33705256,
+                population: "1,077,075",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Howrah 36 Ecosystem", "url": "#ecosystem_maps/India_Howrah_36_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Hyderabad",
+                country: "India",
+                lat: 17.3998928,
+                lng: 78.47475843,
+                population: "6,993,262",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Hyderabad 3 Ecosystem", "url": "#ecosystem_maps/India_Hyderabad_3_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Indore",
+                country: "India",
+                lat: 22.72677256,
+                lng: 75.86649528,
+                population: "1,964,086",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Indore 13 Ecosystem", "url": "#ecosystem_maps/India_Indore_13_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Jabalpur",
+                country: "India",
+                lat: 23.16993233,
+                lng: 79.94018006,
+                population: "1,055,525",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Jabalpur 38 Ecosystem", "url": "#ecosystem_maps/India_Jabalpur_38_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Jaipur",
+                country: "India",
+                lat: 26.92570867,
+                lng: 75.82772038,
+                population: "3,046,163",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Jaipur 9 Ecosystem", "url": "#ecosystem_maps/India_Jaipur_9_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Jodhpur",
+                country: "India",
+                lat: 26.29017287,
+                lng: 73.0340395,
+                population: "1,033,756",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Jodhpur 42 Ecosystem", "url": "#ecosystem_maps/India_Jodhpur_42_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Kalyan-Dombivali",
+                country: "India",
+                lat: 19.21184775,
+                lng: 73.09938228,
+                population: "1,247,327",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Kalyan Dombivali 27 E...", "url": "#ecosystem_maps/India_Kalyan_Dombivali_27_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Kanpur",
+                country: "India",
+                lat: 26.47152579,
+                lng: 80.35396514,
+                population: "2,765,348",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Kanpur 11 Ecosystem", "url": "#ecosystem_maps/India_Kanpur_11_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Kolkata",
+                country: "India",
+                lat: 22.56802899,
+                lng: 88.34551158,
+                population: "4,496,694",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Kolkata 6 Ecosystem", "url": "#ecosystem_maps/India_Kolkata_6_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Kota",
+                country: "India",
+                lat: 25.16692696,
+                lng: 75.83442635,
+                population: "1,001,694",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Kota 45 Ecosystem", "url": "#ecosystem_maps/India_Kota_45_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Lucknow",
+                country: "India",
+                lat: 26.85871322,
+                lng: 80.92647863,
+                population: "2,817,105",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Lucknow 10 Ecosystem", "url": "#ecosystem_maps/India_Lucknow_10_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Ludhiana",
+                country: "India",
+                lat: 30.90453672,
+                lng: 75.85661216,
+                population: "1,618,879",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Ludhiana 21 Ecosystem", "url": "#ecosystem_maps/India_Ludhiana_21_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Madurai",
+                country: "India",
+                lat: 9.916307167,
+                lng: 78.12784067,
+                population: "1,017,865",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Madurai 43 Ecosystem", "url": "#ecosystem_maps/India_Madurai_43_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Mumbai",
+                country: "India",
+                lat: 18.97337825,
+                lng: 72.83001644,
+                population: "12,442,373",
+                csvMatched: true,
+                htmlCount: 2,
+                links: [{"name": "India Mumbai 0 Ecosystem", "url": "#ecosystem_maps/India_Mumbai_0_ecosystem.html"}, {"name": "India Mumbai Ecosystem Map", "url": "#ecosystem_analysis_maps/India/India_Mumbai_ecosystem_map.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Nagpur",
+                country: "India",
+                lat: 21.15770331,
+                lng: 79.101936,
+                population: "2,405,665",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Nagpur 12 Ecosystem", "url": "#ecosystem_maps/India_Nagpur_12_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Nashik",
+                country: "India",
+                lat: 19.99887101,
+                lng: 73.78667777,
+                population: "1,486,053",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Nashik 23 Ecosystem", "url": "#ecosystem_maps/India_Nashik_23_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Navi Mumbai",
+                country: "India",
+                lat: 19.04158667,
+                lng: 73.02671827,
+                population: "1,120,547",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Navi Mumbai 34 Ecosystem", "url": "#ecosystem_maps/India_Navi_Mumbai_34_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Pimpri-Chinchwad",
+                country: "India",
+                lat: 18.62910239,
+                lng: 73.79741541,
+                population: "1,727,692",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Pimpri Chinchwad 17 E...", "url": "#ecosystem_maps/India_Pimpri_Chinchwad_17_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Prayagraj",
+                country: "India",
+                lat: 25.46126147,
+                lng: 81.84365315,
+                population: "1,112,544",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Prayagraj 35 Ecosystem", "url": "#ecosystem_maps/India_Prayagraj_35_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Pune",
+                country: "India",
+                lat: 18.50352673,
+                lng: 73.85541467,
+                population: "3,124,458",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Pune 8 Ecosystem", "url": "#ecosystem_maps/India_Pune_8_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Raipur",
+                country: "India",
+                lat: 21.25514235,
+                lng: 81.64663045,
+                population: "1,010,433",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Raipur 44 Ecosystem", "url": "#ecosystem_maps/India_Raipur_44_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Rajkot",
+                country: "India",
+                lat: 22.26021108,
+                lng: 70.81586827,
+                population: "1,286,678",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Rajkot 26 Ecosystem", "url": "#ecosystem_maps/India_Rajkot_26_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Ranchi",
+                country: "India",
+                lat: 23.35406909,
+                lng: 85.32830796,
+                population: "1,073,427",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Ranchi 37 Ecosystem", "url": "#ecosystem_maps/India_Ranchi_37_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Srinagar",
+                country: "India",
+                lat: 34.09636142,
+                lng: 74.81219811,
+                population: "1,180,570",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Srinagar 30 Ecosystem", "url": "#ecosystem_maps/India_Srinagar_30_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Surat",
+                country: "India",
+                lat: 22.56800917,
+                lng: 88.3456296,
+                population: "4,467,797",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Surat 7 Ecosystem", "url": "#ecosystem_maps/India_Surat_7_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Thane",
+                country: "India",
+                lat: 19.19870261,
+                lng: 72.98055475,
+                population: "1,841,488",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Thane 14 Ecosystem", "url": "#ecosystem_maps/India_Thane_14_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Vadodara",
+                country: "India",
+                lat: 22.30458187,
+                lng: 73.20242944,
+                population: "1,670,806",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Vadodara 19 Ecosystem", "url": "#ecosystem_maps/India_Vadodara_19_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Varanasi",
+                country: "India",
+                lat: 25.32025488,
+                lng: 83.01370402,
+                population: "1,198,491",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Varanasi 29 Ecosystem", "url": "#ecosystem_maps/India_Varanasi_29_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Vasai-Virar",
+                country: "India",
+                lat: 19.38014769,
+                lng: 72.82561988,
+                population: "1,222,390",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Vasai Virar 28 Ecosystem", "url": "#ecosystem_maps/India_Vasai_Virar_28_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Vijayawada",
+                country: "India",
+                lat: 16.51171316,
+                lng: 80.66785418,
+                population: "1,034,358",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Vijayawada 41 Ecosystem", "url": "#ecosystem_maps/India_Vijayawada_41_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Visakhapatnam",
+                country: "India",
+                lat: 17.69745129,
+                lng: 83.29854116,
+                population: "1,728,128",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "India Visakhapatnam 16 Ecos...", "url": "#ecosystem_maps/India_Visakhapatnam_16_ecosystem.html"}],
+                color: countryColors["India"] || '#666'
+            },
+            {
+                name: "Ahvaz",
+                country: "Iran",
+                lat: 31.32098267,
+                lng: 48.66270242,
+                population: "1,184,788",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Ahvaz 7 Ecosystem", "url": "#ecosystem_maps/Iran_Ahvaz_7_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Arak",
+                country: "Iran",
+                lat: 34.10337729,
+                lng: 49.70383719,
+                population: "520,944",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Arak 17 Ecosystem", "url": "#ecosystem_maps/Iran_Arak_17_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Ardabil",
+                country: "Iran",
+                lat: 38.24388059,
+                lng: 48.29660196,
+                population: "529,374",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Ardabil 15 Ecosystem", "url": "#ecosystem_maps/Iran_Ardabil_15_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Bandar Abbas",
+                country: "Iran",
+                lat: 27.18328154,
+                lng: 56.28759367,
+                population: "526,648",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Bandar Abbas 16 Ecosystem", "url": "#ecosystem_maps/Iran_Bandar_Abbas_16_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Eslamshahr",
+                country: "Iran",
+                lat: 35.559576,
+                lng: 51.24405821,
+                population: "448,129",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Eslamshahr 18 Ecosystem", "url": "#ecosystem_maps/Iran_Eslamshahr_18_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Gorgan",
+                country: "Iran",
+                lat: 36.8411329,
+                lng: 54.43290698,
+                population: "350,676",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Gorgan 22 Ecosystem", "url": "#ecosystem_maps/Iran_Gorgan_22_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Hamadan",
+                country: "Iran",
+                lat: 34.79847385,
+                lng: 48.51487555,
+                population: "554,406",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Hamadan 12 Ecosystem", "url": "#ecosystem_maps/Iran_Hamadan_12_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Isfahan",
+                country: "Iran",
+                lat: 32.65807725,
+                lng: 51.67013582,
+                population: "1,961,260",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Isfahan 2 Ecosystem", "url": "#ecosystem_maps/Iran_Isfahan_2_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Karaj",
+                country: "Iran",
+                lat: 35.8128104,
+                lng: 50.99632929,
+                population: "1,592,492",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Karaj 3 Ecosystem", "url": "#ecosystem_maps/Iran_Karaj_3_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Kashan",
+                country: "Iran",
+                lat: 34.00236857,
+                lng: 51.44211364,
+                population: "304,487",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Kashan 26 Ecosystem", "url": "#ecosystem_maps/Iran_Kashan_26_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Kerman",
+                country: "Iran",
+                lat: 30.28524544,
+                lng: 57.08532289,
+                population: "537,718",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Kerman 13 Ecosystem", "url": "#ecosystem_maps/Iran_Kerman_13_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Kermanshah",
+                country: "Iran",
+                lat: 34.30909074,
+                lng: 47.07179625,
+                population: "946,651",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Kermanshah 8 Ecosystem", "url": "#ecosystem_maps/Iran_Kermanshah_8_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Khorramabad",
+                country: "Iran",
+                lat: 33.48952477,
+                lng: 48.34964435,
+                population: "373,416",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Khorramabad 21 Ecosystem", "url": "#ecosystem_maps/Iran_Khorramabad_21_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Mashhad",
+                country: "Iran",
+                lat: 36.2987045,
+                lng: 59.6074987,
+                population: "3,001,184",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Mashhad 1 Ecosystem", "url": "#ecosystem_maps/Iran_Mashhad_1_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Qazvin",
+                country: "Iran",
+                lat: 36.27129782,
+                lng: 50.01052205,
+                population: "402,748",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Qazvin 20 Ecosystem", "url": "#ecosystem_maps/Iran_Qazvin_20_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Qods",
+                country: "Iran",
+                lat: 35.71024914,
+                lng: 51.12986628,
+                population: "309,605",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Qods 25 Ecosystem", "url": "#ecosystem_maps/Iran_Qods_25_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Qom",
+                country: "Iran",
+                lat: 34.66200161,
+                lng: 50.89943833,
+                population: "1,201,158",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Qom 6 Ecosystem", "url": "#ecosystem_maps/Iran_Qom_6_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Rasht",
+                country: "Iran",
+                lat: 37.28705978,
+                lng: 49.58459634,
+                population: "679,995",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Rasht 10 Ecosystem", "url": "#ecosystem_maps/Iran_Rasht_10_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Sari",
+                country: "Iran",
+                lat: 36.5676316,
+                lng: 53.06403679,
+                population: "347,402",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Sari 23 Ecosystem", "url": "#ecosystem_maps/Iran_Sari_23_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Shahriar",
+                country: "Iran",
+                lat: 35.68061535,
+                lng: 51.04400683,
+                population: "309,607",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Shahriar 24 Ecosystem", "url": "#ecosystem_maps/Iran_Shahriar_24_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Shiraz",
+                country: "Iran",
+                lat: 29.60707589,
+                lng: 52.54573641,
+                population: "1,565,572",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Shiraz 4 Ecosystem", "url": "#ecosystem_maps/Iran_Shiraz_4_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Tabriz",
+                country: "Iran",
+                lat: 38.07333967,
+                lng: 46.29566877,
+                population: "1,558,693",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Tabriz 5 Ecosystem", "url": "#ecosystem_maps/Iran_Tabriz_5_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Tehran",
+                country: "Iran",
+                lat: 35.68608366,
+                lng: 51.42150875,
+                population: "8,693,706",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Tehran 0 Ecosystem", "url": "#ecosystem_maps/Iran_Tehran_0_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Urmia",
+                country: "Iran",
+                lat: 37.52496882,
+                lng: 45.05270953,
+                population: "736,224",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Urmia 9 Ecosystem", "url": "#ecosystem_maps/Iran_Urmia_9_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Yazd",
+                country: "Iran",
+                lat: 31.89476743,
+                lng: 54.36164695,
+                population: "529,673",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Yazd 14 Ecosystem", "url": "#ecosystem_maps/Iran_Yazd_14_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Zahedan",
+                country: "Iran",
+                lat: 29.48854872,
+                lng: 60.88067378,
+                population: "587,730",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Zahedan 11 Ecosystem", "url": "#ecosystem_maps/Iran_Zahedan_11_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Zanjan",
+                country: "Iran",
+                lat: 36.67419613,
+                lng: 48.48805409,
+                population: "430,871",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Iran Zanjan 19 Ecosystem", "url": "#ecosystem_maps/Iran_Zanjan_19_ecosystem.html"}],
+                color: countryColors["Iran"] || '#666'
+            },
+            {
+                name: "Luang Prabang (Louangphrabang)",
+                country: "Laos",
+                lat: 19.89198927,
+                lng: 102.1410956,
+                population: "47378",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Luang Prabang  Louangp...", "url": "#ecosystem_maps/Laos_Luang_Prabang__Louangphrabang__3_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Muang Xay (Oudomxai)",
+                country: "Laos",
+                lat: 20.691346,
+                lng: 101.99528503417967,
+                population: "25000",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Muang Xay  Oudomxai  7...", "url": "#ecosystem_maps/Laos_Muang_Xay__Oudomxai__7_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Pakse (Pakxe)",
+                country: "Laos",
+                lat: 15.11944378,
+                lng: 105.814881,
+                population: "88332",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Pakse  Pakxe  2 Ecosystem", "url": "#ecosystem_maps/Laos_Pakse__Pakxe__2_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Phonsavan (Ban Phonsavan)",
+                country: "Laos",
+                lat: 19.44888306,
+                lng: 103.211157,
+                population: "37507",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Phonsavan  Ban Phonsav...", "url": "#ecosystem_maps/Laos_Phonsavan__Ban_Phonsavan__5_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Savannakhet",
+                country: "Laos",
+                lat: 16.56554827,
+                lng: 104.763124,
+                population: "125760",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Savannakhet 1 Ecosystem", "url": "#ecosystem_maps/Laos_Savannakhet_1_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Thakhek",
+                country: "Laos",
+                lat: 17.40222047,
+                lng: 104.814112,
+                population: "26200",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Thakhek 6 Ecosystem", "url": "#ecosystem_maps/Laos_Thakhek_6_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Vientiane",
+                country: "Laos",
+                lat: 17.96891777,
+                lng: 102.607653,
+                population: "768743",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Vientiane 0 Ecosystem", "url": "#ecosystem_maps/Laos_Vientiane_0_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Xam Neua (Xam Nua, Sam Neua)",
+                country: "Laos",
+                lat: 20.41480612,
+                lng: 104.049427,
+                population: "38992",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Laos Xam Neua  Xam Nua  Sam...", "url": "#ecosystem_maps/Laos_Xam_Neua__Xam_Nua__Sam_Neua__4_ecosystem.html"}],
+                color: countryColors["Laos"] || '#666'
+            },
+            {
+                name: "Altai",
+                country: "Mongolia",
+                lat: 46.37279891967773,
+                lng: 96.2572021484375,
+                population: "801",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Altai 22 Ecosystem", "url": "#ecosystem_maps/Mongolia_Altai_22_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Arvaikheer",
+                country: "Mongolia",
+                lat: 46.26390075683594,
+                lng: 102.7750015258789,
+                population: "8,104",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Arvaikheer 20 Ecos...", "url": "#ecosystem_maps/Mongolia_Arvaikheer_20_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Baganuur",
+                country: "Mongolia",
+                lat: 47.78419876098633,
+                lng: 108.37169647216795,
+                population: "1,110",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Baganuur 0 Ecosystem", "url": "#ecosystem_maps/Mongolia_Baganuur_0_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Baruun-Urt",
+                country: "Mongolia",
+                lat: 46.682899475097656,
+                lng: 113.27860260009766,
+                population: "997",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Baruun Urt 25 Ecos...", "url": "#ecosystem_maps/Mongolia_Baruun_Urt_25_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Bayankhongor",
+                country: "Mongolia",
+                lat: 46.19169998168945,
+                lng: 100.7177963256836,
+                population: "7,751",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Bayankhongor 18 Ec...", "url": "#ecosystem_maps/Mongolia_Bayankhongor_18_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Bulgan",
+                country: "Mongolia",
+                lat: 48.81029891967773,
+                lng: 103.54080200195312,
+                population: "1,361",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Bulgan 2 Ecosystem", "url": "#ecosystem_maps/Mongolia_Bulgan_2_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Choibalsan",
+                country: "Mongolia",
+                lat: 48.07059860229492,
+                lng: 114.52279663085938,
+                population: "1,586",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Choibalsan 4 Ecosy...", "url": "#ecosystem_maps/Mongolia_Choibalsan_4_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Dalanzadgad",
+                country: "Mongolia",
+                lat: 43.56999969482422,
+                lng: 104.42579650878906,
+                population: "4,690",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Dalanzadgad 14 Eco...", "url": "#ecosystem_maps/Mongolia_Dalanzadgad_14_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Darkhan",
+                country: "Mongolia",
+                lat: 49.486698150634766,
+                lng: 105.92279815673828,
+                population: "8,947",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Darkhan 21 Ecosystem", "url": "#ecosystem_maps/Mongolia_Darkhan_21_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Erdenet",
+                country: "Mongolia",
+                lat: 49.02780151367188,
+                lng: 104.04440307617188,
+                population: "12,429",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Erdenet 5 Ecosystem", "url": "#ecosystem_maps/Mongolia_Erdenet_5_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Kharkhorin",
+                country: "Mongolia",
+                lat: 47.19720077514648,
+                lng: 102.82389831542967,
+                population: "2,801",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Kharkhorin 9 Ecosy...", "url": "#ecosystem_maps/Mongolia_Kharkhorin_9_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Khovd",
+                country: "Mongolia",
+                lat: 48.00669860839844,
+                lng: 91.64640045166016,
+                population: "3,247",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Khovd 12 Ecosystem", "url": "#ecosystem_maps/Mongolia_Khovd_12_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "M\u02c6r\u02c6n",
+                country: "Mongolia",
+                lat: 49.63750076293945,
+                lng: 100.1613998413086,
+                population: "6,886",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia M R N 16 Ecosystem", "url": "#ecosystem_maps/Mongolia_M_r_n_16_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Mandalgovi",
+                country: "Mongolia",
+                lat: 45.766700744628906,
+                lng: 106.2707977294922,
+                population: "857",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Mandalgovi 23 Ecos...", "url": "#ecosystem_maps/Mongolia_Mandalgovi_23_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Nalaikh",
+                country: "Mongolia",
+                lat: 47.772499084472656,
+                lng: 107.25499725341795,
+                population: "6,449",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Nalaikh 15 Ecosystem", "url": "#ecosystem_maps/Mongolia_Nalaikh_15_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "S\u00b8khbaatar",
+                country: "Mongolia",
+                lat: 50.23640060424805,
+                lng: 106.2063980102539,
+                population: "2,712",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia S Khbaatar 8 Ecosy...", "url": "#ecosystem_maps/Mongolia_S_khbaatar_8_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Sainshand",
+                country: "Mongolia",
+                lat: 44.891700744628906,
+                lng: 110.13670349121094,
+                population: "2,225",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Sainshand 7 Ecosystem", "url": "#ecosystem_maps/Mongolia_Sainshand_7_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Tsetserleg",
+                country: "Mongolia",
+                lat: 47.476898193359375,
+                lng: 101.45030212402344,
+                population: "2,085",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Tsetserleg 6 Ecosy...", "url": "#ecosystem_maps/Mongolia_Tsetserleg_6_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Ulaanbaatar",
+                country: "Mongolia",
+                lat: 47.91586066,
+                lng: 106.9015404,
+                population: "299,715",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Ulaanbaatar 11 Eco...", "url": "#ecosystem_maps/Mongolia_Ulaanbaatar_11_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Ulaangom",
+                country: "Mongolia",
+                lat: 49.98329925537109,
+                lng: 92.06670379638672,
+                population: "1,159",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Ulaangom 1 Ecosystem", "url": "#ecosystem_maps/Mongolia_Ulaangom_1_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Uliastai",
+                country: "Mongolia",
+                lat: 47.742801666259766,
+                lng: 96.84329986572266,
+                population: "686",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Uliastai 17 Ecosystem", "url": "#ecosystem_maps/Mongolia_Uliastai_17_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Z\u00b8\u00b8nkharaa",
+                country: "Mongolia",
+                lat: 48.85300064086914,
+                lng: 106.45939636230467,
+                population: "25105",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Z  Nkharaa 10 Ecos...", "url": "#ecosystem_maps/Mongolia_Z__nkharaa_10_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Zamyn-\u2039\u00b8d",
+                country: "Mongolia",
+                lat: 43.71810150146485,
+                lng: 111.90609741210938,
+                population: "7,799",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Zamyn   D 19 Ecosy...", "url": "#ecosystem_maps/Mongolia_Zamyn___d_19_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Zuunmod",
+                country: "Mongolia",
+                lat: 47.70690155029297,
+                lng: 106.94940185546876,
+                population: "1,507",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia Zuunmod 3 Ecosystem", "url": "#ecosystem_maps/Mongolia_Zuunmod_3_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "\u00f7lgii",
+                country: "Mongolia",
+                lat: 48.965599060058594,
+                lng: 89.96320343017578,
+                population: "3,601",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia  Lgii 13 Ecosystem", "url": "#ecosystem_maps/Mongolia__lgii_13_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "\u00f7nd\u02c6rkhaan",
+                country: "Mongolia",
+                lat: 47.32389831542969,
+                lng: 110.66169738769533,
+                population: "997",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Mongolia  Nd Rkhaan 24 Ecos...", "url": "#ecosystem_maps/Mongolia__nd_rkhaan_24_ecosystem.html"}],
+                color: countryColors["Mongolia"] || '#666'
+            },
+            {
+                name: "Bharatpur",
+                country: "Nepal",
+                lat: 27.683300018310547,
+                lng: 84.43329620361328,
+                population: "369268",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Bharatpur 2 Ecosystem", "url": "#ecosystem_maps/Nepal_Bharatpur_2_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Biratnagar",
+                country: "Nepal",
+                lat: 26.483299255371094,
+                lng: 87.2833023071289,
+                population: "243927",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Biratnagar 5 Ecosystem", "url": "#ecosystem_maps/Nepal_Biratnagar_5_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Birgunj",
+                country: "Nepal",
+                lat: 27.0,
+                lng: 84.86669921875,
+                population: "272382",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Birgunj 4 Ecosystem", "url": "#ecosystem_maps/Nepal_Birgunj_4_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Kathmandu",
+                country: "Nepal",
+                lat: 27.709999084472656,
+                lng: 85.31999969482422,
+                population: "862400",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Kathmandu 0 Ecosystem", "url": "#ecosystem_maps/Nepal_Kathmandu_0_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Lalitpur",
+                country: "Nepal",
+                lat: 27.683300018310547,
+                lng: 85.33329772949219,
+                population: "294098",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Lalitpur 3 Ecosystem", "url": "#ecosystem_maps/Nepal_Lalitpur_3_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Pokhara",
+                country: "Nepal",
+                lat: 28.209699630737305,
+                lng: 83.98529815673828,
+                population: "513504",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Nepal Pokhara 1 Ecosystem", "url": "#ecosystem_maps/Nepal_Pokhara_1_ecosystem.html"}],
+                color: countryColors["Nepal"] || '#666'
+            },
+            {
+                name: "Abbottabad",
+                country: "Pakistan",
+                lat: 34.150001525878906,
+                lng: 73.2166976928711,
+                population: "234395",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Abbottabad 34 Ecos...", "url": "#ecosystem_maps/Pakistan_Abbottabad_34_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Bahawalnagar",
+                country: "Pakistan",
+                lat: 29.994400024414062,
+                lng: 73.25360107421875,
+                population: "241873",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Bahawalnagar 35 Ec...", "url": "#ecosystem_maps/Pakistan_Bahawalnagar_35_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Burewala",
+                country: "Pakistan",
+                lat: 30.149999618530277,
+                lng: 72.68329620361328,
+                population: "361664",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Burewala 25 Ecosystem", "url": "#ecosystem_maps/Pakistan_Burewala_25_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Chakwal",
+                country: "Pakistan",
+                lat: 32.93000030517578,
+                lng: 72.8499984741211,
+                population: "218356",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Chakwal 28 Ecosystem", "url": "#ecosystem_maps/Pakistan_Chakwal_28_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Chiniot",
+                country: "Pakistan",
+                lat: 31.716699600219727,
+                lng: 72.9832992553711,
+                population: "318165",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Chiniot 29 Ecosystem", "url": "#ecosystem_maps/Pakistan_Chiniot_29_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Daska",
+                country: "Pakistan",
+                lat: 32.31669998168945,
+                lng: 74.3499984741211,
+                population: "228626",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Daska 47 Ecosystem", "url": "#ecosystem_maps/Pakistan_Daska_47_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Dera Ghazi Khan",
+                country: "Pakistan",
+                lat: 30.049999237060547,
+                lng: 70.63330078125,
+                population: "494464",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Dera Ghazi Khan 12...", "url": "#ecosystem_maps/Pakistan_Dera_Ghazi_Khan_12_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Dera Ismail Khan",
+                country: "Pakistan",
+                lat: 31.816699981689453,
+                lng: 70.91670227050781,
+                population: "220575",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Dera Ismail Khan 1...", "url": "#ecosystem_maps/Pakistan_Dera_Ismail_Khan_14_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Faisalabad",
+                country: "Pakistan",
+                lat: 31.417999267578125,
+                lng: 73.0790023803711,
+                population: "3691999",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Faisalabad 32 Ecos...", "url": "#ecosystem_maps/Pakistan_Faisalabad_32_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Gojra",
+                country: "Pakistan",
+                lat: 31.149999618530277,
+                lng: 72.68329620361328,
+                population: "214349",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Gojra 26 Ecosystem", "url": "#ecosystem_maps/Pakistan_Gojra_26_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Gujranwala",
+                country: "Pakistan",
+                lat: 32.150001525878906,
+                lng: 74.18329620361328,
+                population: "2511118",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Gujranwala 43 Ecos...", "url": "#ecosystem_maps/Pakistan_Gujranwala_43_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Gujrat",
+                country: "Pakistan",
+                lat: 32.57360076904297,
+                lng: 74.07890319824219,
+                population: "574240",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Gujrat 42 Ecosystem", "url": "#ecosystem_maps/Pakistan_Gujrat_42_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Hafizabad",
+                country: "Pakistan",
+                lat: 32.06669998168945,
+                lng: 73.68329620361328,
+                population: "318621",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Hafizabad 39 Ecosy...", "url": "#ecosystem_maps/Pakistan_Hafizabad_39_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Hyderabad",
+                country: "Pakistan",
+                lat: 25.379199981689453,
+                lng: 68.36830139160156,
+                population: "1921275",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Hyderabad 5 Ecosystem", "url": "#ecosystem_maps/Pakistan_Hyderabad_5_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Islamabad",
+                country: "Pakistan",
+                lat: 33.69889831542969,
+                lng: 73.03690338134766,
+                population: "1108872",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Islamabad 30 Ecosy...", "url": "#ecosystem_maps/Pakistan_Islamabad_30_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Jacobabad",
+                country: "Pakistan",
+                lat: 28.276899337768555,
+                lng: 68.45140075683594,
+                population: "219315",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Jacobabad 7 Ecosystem", "url": "#ecosystem_maps/Pakistan_Jacobabad_7_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Jhang",
+                country: "Pakistan",
+                lat: 31.26810073852539,
+                lng: 72.31809997558594,
+                population: "606533",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Jhang 22 Ecosystem", "url": "#ecosystem_maps/Pakistan_Jhang_22_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Jhelum",
+                country: "Pakistan",
+                lat: 32.93330001831055,
+                lng: 73.7332992553711,
+                population: "312426",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Jhelum 40 Ecosystem", "url": "#ecosystem_maps/Pakistan_Jhelum_40_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Kamoke",
+                country: "Pakistan",
+                lat: 31.97439956665039,
+                lng: 74.22440338134766,
+                population: "292023",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Kamoke 44 Ecosystem", "url": "#ecosystem_maps/Pakistan_Kamoke_44_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Karachi",
+                country: "Pakistan",
+                lat: 24.86000061035156,
+                lng: 67.01000213623047,
+                population: "18868021",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Karachi 3 Ecosystem", "url": "#ecosystem_maps/Pakistan_Karachi_3_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Kasur",
+                country: "Pakistan",
+                lat: 31.11669921875,
+                lng: 74.44999694824219,
+                population: "510875",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Kasur 48 Ecosystem", "url": "#ecosystem_maps/Pakistan_Kasur_48_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Khanewal",
+                country: "Pakistan",
+                lat: 30.299999237060547,
+                lng: 71.93329620361328,
+                population: "281890",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Khanewal 20 Ecosystem", "url": "#ecosystem_maps/Pakistan_Khanewal_20_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Khanpur",
+                country: "Pakistan",
+                lat: 28.64179992675781,
+                lng: 70.65769958496094,
+                population: "247170",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Khanpur 13 Ecosystem", "url": "#ecosystem_maps/Pakistan_Khanpur_13_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Khuzdar",
+                country: "Pakistan",
+                lat: 27.799999237060547,
+                lng: 66.61669921875,
+                population: "218112",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Khuzdar 1 Ecosystem", "url": "#ecosystem_maps/Pakistan_Khuzdar_1_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Kohat",
+                country: "Pakistan",
+                lat: 33.58689880371094,
+                lng: 71.44139862060547,
+                population: "235880",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Kohat 16 Ecosystem", "url": "#ecosystem_maps/Pakistan_Kohat_16_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Lahore",
+                country: "Pakistan",
+                lat: 31.549699783325195,
+                lng: 74.34359741210938,
+                population: "13004135",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Lahore 46 Ecosystem", "url": "#ecosystem_maps/Pakistan_Lahore_46_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Larkana",
+                country: "Pakistan",
+                lat: 27.559999465942383,
+                lng: 68.22640228271484,
+                population: "551716",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Larkana 4 Ecosystem", "url": "#ecosystem_maps/Pakistan_Larkana_4_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Mandi Bahauddin",
+                country: "Pakistan",
+                lat: 32.58610153198242,
+                lng: 73.49169921875,
+                population: "232361",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Mandi Bahauddin 38...", "url": "#ecosystem_maps/Pakistan_Mandi_Bahauddin_38_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Mardan",
+                country: "Pakistan",
+                lat: 34.19580078125,
+                lng: 72.0447006225586,
+                population: "368302",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Mardan 21 Ecosystem", "url": "#ecosystem_maps/Pakistan_Mardan_21_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Mingora",
+                country: "Pakistan",
+                lat: 34.77170181274414,
+                lng: 72.36000061035156,
+                population: "361112",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Mingora 23 Ecosystem", "url": "#ecosystem_maps/Pakistan_Mingora_23_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Mirpur Khas",
+                country: "Pakistan",
+                lat: 25.526899337768555,
+                lng: 69.01110076904297,
+                population: "267833",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Mirpur Khas 9 Ecos...", "url": "#ecosystem_maps/Pakistan_Mirpur_Khas_9_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Multan",
+                country: "Pakistan",
+                lat: 30.197799682617188,
+                lng: 71.47109985351562,
+                population: "2215381",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Multan 17 Ecosystem", "url": "#ecosystem_maps/Pakistan_Multan_17_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Muridke",
+                country: "Pakistan",
+                lat: 31.802000045776367,
+                lng: 74.25499725341797,
+                population: "254291",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Muridke 45 Ecosystem", "url": "#ecosystem_maps/Pakistan_Muridke_45_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Muzaffargarh",
+                country: "Pakistan",
+                lat: 30.07029914855957,
+                lng: 71.19329833984375,
+                population: "235541",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Muzaffargarh 15 Ec...", "url": "#ecosystem_maps/Pakistan_Muzaffargarh_15_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Nawabshah",
+                country: "Pakistan",
+                lat: 26.244199752807617,
+                lng: 68.41000366210938,
+                population: "363138",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Nawabshah 6 Ecosystem", "url": "#ecosystem_maps/Pakistan_Nawabshah_6_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Okara",
+                country: "Pakistan",
+                lat: 30.809999465942383,
+                lng: 73.45970153808594,
+                population: "533693",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Okara 37 Ecosystem", "url": "#ecosystem_maps/Pakistan_Okara_37_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Pakpattan",
+                country: "Pakistan",
+                lat: 30.350000381469727,
+                lng: 73.4000015258789,
+                population: "221280",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Pakpattan 36 Ecosy...", "url": "#ecosystem_maps/Pakistan_Pakpattan_36_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Peshawar",
+                country: "Pakistan",
+                lat: 34.014400482177734,
+                lng: 71.56749725341797,
+                population: "1905975",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Peshawar 18 Ecosystem", "url": "#ecosystem_maps/Pakistan_Peshawar_18_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Quetta",
+                country: "Pakistan",
+                lat: 30.191999435424805,
+                lng: 67.00700378417969,
+                population: "1565546",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Quetta 2 Ecosystem", "url": "#ecosystem_maps/Pakistan_Quetta_2_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Rahim Yar Khan",
+                country: "Pakistan",
+                lat: 28.42060089111328,
+                lng: 70.30329895019531,
+                population: "519261",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Rahim Yar Khan 11 ...", "url": "#ecosystem_maps/Pakistan_Rahim_Yar_Khan_11_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Rawalpindi",
+                country: "Pakistan",
+                lat: 33.60070037841797,
+                lng: 73.06790161132812,
+                population: "3357612",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Rawalpindi 31 Ecos...", "url": "#ecosystem_maps/Pakistan_Rawalpindi_31_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sadiqabad",
+                country: "Pakistan",
+                lat: 28.283300399780277,
+                lng: 70.11669921875,
+                population: "274210",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sadiqabad 10 Ecosy...", "url": "#ecosystem_maps/Pakistan_Sadiqabad_10_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sahiwal",
+                country: "Pakistan",
+                lat: 30.67060089111328,
+                lng: 73.10639953613281,
+                population: "538344",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sahiwal 33 Ecosystem", "url": "#ecosystem_maps/Pakistan_Sahiwal_33_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sargodha",
+                country: "Pakistan",
+                lat: 32.08359909057617,
+                lng: 72.67109680175781,
+                population: "975886",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sargodha 24 Ecosystem", "url": "#ecosystem_maps/Pakistan_Sargodha_24_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sheikhupura",
+                country: "Pakistan",
+                lat: 31.70829963684082,
+                lng: 74.0,
+                population: "591424",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sheikhupura 41 Eco...", "url": "#ecosystem_maps/Pakistan_Sheikhupura_41_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sialkot",
+                country: "Pakistan",
+                lat: 32.5,
+                lng: 74.5333023071289,
+                population: "911817",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sialkot 49 Ecosystem", "url": "#ecosystem_maps/Pakistan_Sialkot_49_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Sukkur",
+                country: "Pakistan",
+                lat: 27.699499130249023,
+                lng: 68.86730194091797,
+                population: "563851",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Sukkur 8 Ecosystem", "url": "#ecosystem_maps/Pakistan_Sukkur_8_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Turbat",
+                country: "Pakistan",
+                lat: 26.00309944152832,
+                lng: 63.05440139770508,
+                population: "268625",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Turbat 0 Ecosystem", "url": "#ecosystem_maps/Pakistan_Turbat_0_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Wah Cantonment",
+                country: "Pakistan",
+                lat: 33.78919982910156,
+                lng: 72.72530364990234,
+                population: "400733",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Pakistan Wah Cantonment 27 ...", "url": "#ecosystem_maps/Pakistan_Wah_Cantonment_27_ecosystem.html"}],
+                color: countryColors["Pakistan"] || '#666'
+            },
+            {
+                name: "Angeles City",
+                country: "Philippines",
+                lat: 15.147199630737305,
+                lng: 120.58470153808594,
+                population: "462,928",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Angeles City 2 ...", "url": "#ecosystem_maps/Philippines_Angeles_City_2_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Antipolo",
+                country: "Philippines",
+                lat: 14.584199905395508,
+                lng: 121.17630004882812,
+                population: "887,399",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Antipolo 33 Eco...", "url": "#ecosystem_maps/Philippines_Antipolo_33_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Bacolod",
+                country: "Philippines",
+                lat: 10.67650032043457,
+                lng: 122.95089721679688,
+                population: "600,783",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Bacolod 38 Ecos...", "url": "#ecosystem_maps/Philippines_Bacolod_38_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Bacoor",
+                country: "Philippines",
+                lat: 14.462400436401367,
+                lng: 120.9645004272461,
+                population: "664,625",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Bacoor 10 Ecosy...", "url": "#ecosystem_maps/Philippines_Bacoor_10_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Baguio",
+                country: "Philippines",
+                lat: 16.41189956665039,
+                lng: 120.59329986572266,
+                population: "366,358",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Baguio 4 Ecosystem", "url": "#ecosystem_maps/Philippines_Baguio_4_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Batangas City",
+                country: "Philippines",
+                lat: 13.75,
+                lng: 121.0500030517578,
+                population: "351,437",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Batangas City 2...", "url": "#ecosystem_maps/Philippines_Batangas_City_24_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Bi\u00d2an",
+                country: "Philippines",
+                lat: 14.33329963684082,
+                lng: 121.0832977294922,
+                population: "407,437",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Bi An 27 Ecosystem", "url": "#ecosystem_maps/Philippines_Bi_an_27_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Butuan",
+                country: "Philippines",
+                lat: 8.953399658203125,
+                lng: 125.52880096435548,
+                population: "372,910",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Butuan 46 Ecosy...", "url": "#ecosystem_maps/Philippines_Butuan_46_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Cabanatuan",
+                country: "Philippines",
+                lat: 15.490799903869627,
+                lng: 120.9677963256836,
+                population: "327,325",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Cabanatuan 12 E...", "url": "#ecosystem_maps/Philippines_Cabanatuan_12_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Cabuyao",
+                country: "Philippines",
+                lat: 14.274999618530272,
+                lng: 121.125,
+                population: "355,330",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Cabuyao 30 Ecos...", "url": "#ecosystem_maps/Philippines_Cabuyao_30_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Cagayan de Oro",
+                country: "Philippines",
+                lat: 8.48330020904541,
+                lng: 124.6500015258789,
+                population: "728,402",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Cagayan De Oro ...", "url": "#ecosystem_maps/Philippines_Cagayan_de_Oro_44_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Calamba",
+                country: "Philippines",
+                lat: 14.216699600219728,
+                lng: 121.1667022705078,
+                population: "539,671",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Calamba 32 Ecos...", "url": "#ecosystem_maps/Philippines_Calamba_32_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Caloocan",
+                country: "Philippines",
+                lat: 14.649999618530272,
+                lng: 120.9666976928711,
+                population: "1,661,584",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Caloocan 11 Eco...", "url": "#ecosystem_maps/Philippines_Caloocan_11_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Cebu City",
+                country: "Philippines",
+                lat: 10.29300022125244,
+                lng: 123.9020004272461,
+                population: "964,169",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Cebu City 39 Ec...", "url": "#ecosystem_maps/Philippines_Cebu_City_39_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Cotabato City",
+                country: "Philippines",
+                lat: 7.216700077056885,
+                lng: 124.25,
+                population: "325,079",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Cotabato City 4...", "url": "#ecosystem_maps/Philippines_Cotabato_City_43_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Dasmari\u00d2as",
+                country: "Philippines",
+                lat: 14.32699966430664,
+                lng: 120.93699645996094,
+                population: "703,141",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Dasmari As 8 Ec...", "url": "#ecosystem_maps/Philippines_Dasmari_as_8_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Davao City",
+                country: "Philippines",
+                lat: 7.066699981689453,
+                lng: 125.5999984741211,
+                population: "1,776,949",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Davao City 47 E...", "url": "#ecosystem_maps/Philippines_Davao_City_47_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "General Santos",
+                country: "Philippines",
+                lat: 6.116700172424316,
+                lng: 125.1667022705078,
+                population: "697,315",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines General Santos ...", "url": "#ecosystem_maps/Philippines_General_Santos_45_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "General Trias",
+                country: "Philippines",
+                lat: 14.383299827575684,
+                lng: 120.88330078125,
+                population: "450,583",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines General Trias 6...", "url": "#ecosystem_maps/Philippines_General_Trias_6_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Iligan",
+                country: "Philippines",
+                lat: 8.23330020904541,
+                lng: 124.25,
+                population: "363,115",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Iligan 42 Ecosy...", "url": "#ecosystem_maps/Philippines_Iligan_42_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Iloilo City",
+                country: "Philippines",
+                lat: 10.716699600219728,
+                lng: 122.56670379638672,
+                population: "457,626",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Iloilo City 37 ...", "url": "#ecosystem_maps/Philippines_Iloilo_City_37_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Imus",
+                country: "Philippines",
+                lat: 14.429699897766112,
+                lng: 120.93669891357422,
+                population: "496,794",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Imus 7 Ecosystem", "url": "#ecosystem_maps/Philippines_Imus_7_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Lapu-Lapu City",
+                country: "Philippines",
+                lat: 10.312700271606444,
+                lng: 123.94879913330078,
+                population: "497,604",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Lapu Lapu City ...", "url": "#ecosystem_maps/Philippines_Lapu_Lapu_City_41_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Las Pi\u00d2as",
+                country: "Philippines",
+                lat: 14.449999809265137,
+                lng: 120.9832992553711,
+                population: "606,293",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Las Pi As 15 Ec...", "url": "#ecosystem_maps/Philippines_Las_Pi_as_15_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Lipa",
+                country: "Philippines",
+                lat: 13.941100120544434,
+                lng: 121.16220092773438,
+                population: "372,931",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Lipa 31 Ecosystem", "url": "#ecosystem_maps/Philippines_Lipa_31_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Lucena",
+                country: "Philippines",
+                lat: 13.933300018310549,
+                lng: 121.61669921875,
+                population: "278,924",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Lucena 35 Ecosy...", "url": "#ecosystem_maps/Philippines_Lucena_35_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Mabalacat",
+                country: "Philippines",
+                lat: 15.216699600219728,
+                lng: 120.5832977294922,
+                population: "293,244",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Mabalacat 1 Eco...", "url": "#ecosystem_maps/Philippines_Mabalacat_1_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Makati",
+                country: "Philippines",
+                lat: 14.556699752807615,
+                lng: 121.02140045166016,
+                population: "629,616",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Makati 18 Ecosy...", "url": "#ecosystem_maps/Philippines_Makati_18_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Malabon",
+                country: "Philippines",
+                lat: 14.662500381469728,
+                lng: 120.95670318603516,
+                population: "380,522",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Malabon 9 Ecosy...", "url": "#ecosystem_maps/Philippines_Malabon_9_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Mandaluyong",
+                country: "Philippines",
+                lat: 14.58329963684082,
+                lng: 121.0333023071289,
+                population: "425,758",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Mandaluyong 19 ...", "url": "#ecosystem_maps/Philippines_Mandaluyong_19_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Mandaue",
+                country: "Philippines",
+                lat: 10.33329963684082,
+                lng: 123.93329620361328,
+                population: "364,116",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Mandaue 40 Ecos...", "url": "#ecosystem_maps/Philippines_Mandaue_40_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Manila",
+                country: "Philippines",
+                lat: 14.595800399780272,
+                lng: 120.97720336914062,
+                population: "1,846,513",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Manila 13 Ecosy...", "url": "#ecosystem_maps/Philippines_Manila_13_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Marikina",
+                country: "Philippines",
+                lat: 14.649999618530272,
+                lng: 121.0999984741211,
+                population: "456,159",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Marikina 28 Eco...", "url": "#ecosystem_maps/Philippines_Marikina_28_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Muntinlupa",
+                country: "Philippines",
+                lat: 14.383299827575684,
+                lng: 121.0500030517578,
+                population: "543,445",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Muntinlupa 23 E...", "url": "#ecosystem_maps/Philippines_Muntinlupa_23_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Para\u00d2aque",
+                country: "Philippines",
+                lat: 14.500800132751465,
+                lng: 120.9915008544922,
+                population: "689,992",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Para Aque 16 Ec...", "url": "#ecosystem_maps/Philippines_Para_aque_16_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Pasay",
+                country: "Philippines",
+                lat: 14.550000190734863,
+                lng: 121.0,
+                population: "440,656",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Pasay 17 Ecosystem", "url": "#ecosystem_maps/Philippines_Pasay_17_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Pasig",
+                country: "Philippines",
+                lat: 14.560500144958496,
+                lng: 121.07649993896484,
+                population: "803,159",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Pasig 26 Ecosystem", "url": "#ecosystem_maps/Philippines_Pasig_26_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Puerto Princesa",
+                country: "Philippines",
+                lat: 9.75,
+                lng: 118.75,
+                population: "307,079",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Puerto Princesa...", "url": "#ecosystem_maps/Philippines_Puerto_Princesa_0_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Quezon City",
+                country: "Philippines",
+                lat: 14.649999618530272,
+                lng: 121.04750061035156,
+                population: "2,960,048",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Quezon City 21 ...", "url": "#ecosystem_maps/Philippines_Quezon_City_21_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "San Fernando",
+                country: "Philippines",
+                lat: 15.033300399780272,
+                lng: 120.68329620361328,
+                population: "125,640",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines San Fernando 5 ...", "url": "#ecosystem_maps/Philippines_San_Fernando_5_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "San Jose del Monte",
+                country: "Philippines",
+                lat: 14.813899993896484,
+                lng: 121.04530334472656,
+                population: "651,813",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines San Jose Del Mo...", "url": "#ecosystem_maps/Philippines_San_Jose_del_Monte_20_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "San Pablo",
+                country: "Philippines",
+                lat: 14.06999969482422,
+                lng: 121.3249969482422,
+                population: "285,348",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines San Pablo 34 Ec...", "url": "#ecosystem_maps/Philippines_San_Pablo_34_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "San Pedro",
+                country: "Philippines",
+                lat: 14.35830020904541,
+                lng: 121.05829620361328,
+                population: "326,001",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines San Pedro 25 Ec...", "url": "#ecosystem_maps/Philippines_San_Pedro_25_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Santa Rosa",
+                country: "Philippines",
+                lat: 14.316699981689451,
+                lng: 121.11669921875,
+                population: "414,812",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Santa Rosa 29 E...", "url": "#ecosystem_maps/Philippines_Santa_Rosa_29_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Taguig",
+                country: "Philippines",
+                lat: 14.51669979095459,
+                lng: 121.0500030517578,
+                population: "1,261,738",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Taguig 22 Ecosy...", "url": "#ecosystem_maps/Philippines_Taguig_22_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Tagum",
+                country: "Philippines",
+                lat: 7.447800159454346,
+                lng: 125.80780029296876,
+                population: "296,202",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Tagum 48 Ecosystem", "url": "#ecosystem_maps/Philippines_Tagum_48_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Tarlac City",
+                country: "Philippines",
+                lat: 15.486900329589844,
+                lng: 120.58999633789062,
+                population: "385,398",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Tarlac City 3 E...", "url": "#ecosystem_maps/Philippines_Tarlac_City_3_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Valenzuela",
+                country: "Philippines",
+                lat: 14.699999809265137,
+                lng: 120.9832992553711,
+                population: "714,978",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Valenzuela 14 E...", "url": "#ecosystem_maps/Philippines_Valenzuela_14_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Zamboanga City",
+                country: "Philippines",
+                lat: 6.904200077056885,
+                lng: 122.07610321044922,
+                population: "977,234",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Philippines Zamboanga City ...", "url": "#ecosystem_maps/Philippines_Zamboanga_City_36_ecosystem.html"}],
+                color: countryColors["Philippines"] || '#666'
+            },
+            {
+                name: "Colombo",
+                country: "SriLanka",
+                lat: 6.9344401359558105,
+                lng: 79.84278106689453,
+                population: "752993",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Srilanka Colombo 0 Ecosystem", "url": "#ecosystem_maps/SriLanka_Colombo_0_ecosystem.html"}],
+                color: countryColors["SriLanka"] || '#666'
+            },
+            {
+                name: "Dehiwala-Mount Lavinia",
+                country: "SriLanka",
+                lat: 6.839719772338867,
+                lng: 79.8758316040039,
+                population: "245974",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Srilanka Dehiwala Mount Lav...", "url": "#ecosystem_maps/SriLanka_Dehiwala_Mount_Lavinia_1_ecosystem.html"}],
+                color: countryColors["SriLanka"] || '#666'
+            },
+            {
+                name: "Moratuwa",
+                country: "SriLanka",
+                lat: 6.799170017242432,
+                lng: 79.87667083740234,
+                population: "207755",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Srilanka Moratuwa 2 Ecosystem", "url": "#ecosystem_maps/SriLanka_Moratuwa_2_ecosystem.html"}],
+                color: countryColors["SriLanka"] || '#666'
+            },
+            {
+                name: "Negombo",
+                country: "SriLanka",
+                lat: 7.216670036315918,
+                lng: 79.83332824707031,
+                population: "127754",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Srilanka Negombo 4 Ecosystem", "url": "#ecosystem_maps/SriLanka_Negombo_4_ecosystem.html"}],
+                color: countryColors["SriLanka"] || '#666'
+            },
+            {
+                name: "Sri Jayawardenepura Kotte",
+                country: "SriLanka",
+                lat: 6.910830020904541,
+                lng: 79.88777923583984,
+                population: "135806",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Srilanka Sri Jayawardenepur...", "url": "#ecosystem_maps/SriLanka_Sri_Jayawardenepura_Kotte_3_ecosystem.html"}],
+                color: countryColors["SriLanka"] || '#666'
+            },
+            {
+                name: "Ba Ria",
+                country: "Vietnam",
+                lat: 10.49899959564209,
+                lng: 107.1675033569336,
+                population: "205,192",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ba Ria 10 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ba_Ria_10_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Bac Giang",
+                country: "Vietnam",
+                lat: 21.27359962463379,
+                lng: 106.19219970703124,
+                population: "174,229",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Bac Giang 5 Ecosystem", "url": "#ecosystem_maps/Vietnam_Bac_Giang_5_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Bac Lieu",
+                country: "Vietnam",
+                lat: 9.293999671936035,
+                lng: 105.72160339355467,
+                population: "158,264",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Bac Lieu 6 Ecosystem", "url": "#ecosystem_maps/Vietnam_Bac_Lieu_6_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Bac Ninh",
+                country: "Vietnam",
+                lat: 21.18610000610352,
+                lng: 106.07630157470705,
+                population: "259,924",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Bac Ninh 7 Ecosystem", "url": "#ecosystem_maps/Vietnam_Bac_Ninh_7_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Bao Loc",
+                country: "Vietnam",
+                lat: 11.54800033569336,
+                lng: 107.80770111083984,
+                population: "158,981",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Bao Loc 30 Ecosystem", "url": "#ecosystem_maps/Vietnam_Bao_Loc_30_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Ben Cat",
+                country: "Vietnam",
+                lat: 11.131799697875977,
+                lng: 106.6072998046875,
+                population: "355,663",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ben Cat 16 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ben_Cat_16_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Bien Hoa",
+                country: "Vietnam",
+                lat: 10.950799942016602,
+                lng: 106.82209777832033,
+                population: "1,055,414",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Bien Hoa 1 Ecosystem", "url": "#ecosystem_maps/Vietnam_Bien_Hoa_1_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Buon Ma Thuot",
+                country: "Vietnam",
+                lat: 12.66670036315918,
+                lng: 108.0500030517578,
+                population: "375,590",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Buon Ma Thuot 0 Eco...", "url": "#ecosystem_maps/Vietnam_Buon_Ma_Thuot_0_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Ca Mau",
+                country: "Vietnam",
+                lat: 9.183300018310549,
+                lng: 105.1500015258789,
+                population: "226,372",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ca Mau 19 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ca_Mau_19_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Cam Pha",
+                country: "Vietnam",
+                lat: 21.006500244140625,
+                lng: 107.27259826660156,
+                population: "155,800",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Cam Pha 40 Ecosystem", "url": "#ecosystem_maps/Vietnam_Cam_Pha_40_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Cao Lanh",
+                country: "Vietnam",
+                lat: 10.46660041809082,
+                lng: 105.635498046875,
+                population: "213,945",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Cao Lanh 3 Ecosystem", "url": "#ecosystem_maps/Vietnam_Cao_Lanh_3_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Ch\u00b0 Linh",
+                country: "Vietnam",
+                lat: 21.11319923400879,
+                lng: 106.3031997680664,
+                population: "220,421",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ch  Linh 22 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ch__Linh_22_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Da Lat",
+                country: "Vietnam",
+                lat: 11.941699981689451,
+                lng: 108.43830108642578,
+                population: "231,225",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Da Lat 29 Ecosystem", "url": "#ecosystem_maps/Vietnam_Da_Lat_29_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Di An",
+                country: "Vietnam",
+                lat: 10.8927001953125,
+                lng: 106.76339721679688,
+                population: "463,023",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Di An 15 Ecosystem", "url": "#ecosystem_maps/Vietnam_Di_An_15_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Dong Trieu",
+                country: "Vietnam",
+                lat: 21.084400177001957,
+                lng: 106.5102996826172,
+                population: "246,290",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Dong Trieu 39 Ecosy...", "url": "#ecosystem_maps/Vietnam_Dong_Trieu_39_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Ha Long",
+                country: "Vietnam",
+                lat: 20.95159912109375,
+                lng: 107.08519744873048,
+                population: "322,710",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ha Long 38 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ha_Long_38_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Ha Tinh",
+                country: "Vietnam",
+                lat: 18.34309959411621,
+                lng: 105.90579986572266,
+                population: "202,062",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Ha Tinh 24 Ecosystem", "url": "#ecosystem_maps/Vietnam_Ha_Tinh_24_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Hai Durong",
+                country: "Vietnam",
+                lat: 20.93989944458008,
+                lng: 106.33090209960938,
+                population: "508,190",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Hai Durong 21 Ecosy...", "url": "#ecosystem_maps/Vietnam_Hai_Durong_21_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Hoa Lu",
+                country: "Vietnam",
+                lat: 20.255300521850582,
+                lng: 105.9542007446289,
+                population: "300,726",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Hoa Lu 33 Ecosystem", "url": "#ecosystem_maps/Vietnam_Hoa_Lu_33_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Kon Tum",
+                country: "Vietnam",
+                lat: 14.341699600219728,
+                lng: 107.9792022705078,
+                population: "168,264",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Kon Tum 27 Ecosystem", "url": "#ecosystem_maps/Vietnam_Kon_Tum_27_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Long Khanh",
+                country: "Vietnam",
+                lat: 10.933099746704102,
+                lng: 107.24469757080078,
+                population: "171,276",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Long Khanh 2 Ecosystem", "url": "#ecosystem_maps/Vietnam_Long_Khanh_2_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Long Xuyen",
+                country: "Vietnam",
+                lat: 10.368599891662598,
+                lng: 105.42340087890624,
+                population: "272,365",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Long Xuyen 4 Ecosystem", "url": "#ecosystem_maps/Vietnam_Long_Xuyen_4_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "My Tho",
+                country: "Vietnam",
+                lat: 10.354299545288086,
+                lng: 106.36399841308594,
+                population: "228,109",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam My Tho 46 Ecosystem", "url": "#ecosystem_maps/Vietnam_My_Tho_46_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Nam Dinh",
+                country: "Vietnam",
+                lat: 20.420000076293945,
+                lng: 106.16829681396484,
+                population: "236,294",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Nam Dinh 31 Ecosystem", "url": "#ecosystem_maps/Vietnam_Nam_Dinh_31_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Nha Trang",
+                country: "Vietnam",
+                lat: 12.244999885559082,
+                lng: 109.19170379638672,
+                population: "422,601",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Nha Trang 25 Ecosystem", "url": "#ecosystem_maps/Vietnam_Nha_Trang_25_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Phan Rang\u00f1Thap Cham",
+                country: "Vietnam",
+                lat: 11.56429958343506,
+                lng: 108.98860168457033,
+                population: "167,394",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Phan Rang Thap Cham...", "url": "#ecosystem_maps/Vietnam_Phan_Rang_Thap_Cham_34_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Phan Thiet",
+                country: "Vietnam",
+                lat: 10.9375,
+                lng: 108.1583023071289,
+                population: "226,736",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Phan Thiet 18 Ecosy...", "url": "#ecosystem_maps/Vietnam_Phan_Thiet_18_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Pho Yen",
+                country: "Vietnam",
+                lat: 21.41550064086914,
+                lng: 105.8739013671875,
+                population: "231,363",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Pho Yen 45 Ecosystem", "url": "#ecosystem_maps/Vietnam_Pho_Yen_45_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Phu Ly",
+                country: "Vietnam",
+                lat: 20.545299530029297,
+                lng: 105.91220092773438,
+                population: "158,212",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Phu Ly 23 Ecosystem", "url": "#ecosystem_maps/Vietnam_Phu_Ly_23_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Phuc Yen",
+                country: "Vietnam",
+                lat: 21.233299255371094,
+                lng: 105.6999969482422,
+                population: "155,575",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Phuc Yen 48 Ecosystem", "url": "#ecosystem_maps/Vietnam_Phuc_Yen_48_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Phy My",
+                country: "Vietnam",
+                lat: 10.58329963684082,
+                lng: 107.07230377197266,
+                population: "179,688",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Phy My 11 Ecosystem", "url": "#ecosystem_maps/Vietnam_Phy_My_11_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Pleiku",
+                country: "Vietnam",
+                lat: 13.971500396728516,
+                lng: 108.01470184326172,
+                population: "254,802",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Pleiku 20 Ecosystem", "url": "#ecosystem_maps/Vietnam_Pleiku_20_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Quang Ngai",
+                country: "Vietnam",
+                lat: 15.120599746704102,
+                lng: 108.79219818115234,
+                population: "261,417",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Quang Ngai 37 Ecosy...", "url": "#ecosystem_maps/Vietnam_Quang_Ngai_37_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Quy Nhon",
+                country: "Vietnam",
+                lat: 13.76959991455078,
+                lng: 109.2313995361328,
+                population: "290,053",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Quy Nhon 12 Ecosystem", "url": "#ecosystem_maps/Vietnam_Quy_Nhon_12_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Rach Gia",
+                country: "Vietnam",
+                lat: 10.012499809265137,
+                lng: 105.08080291748048,
+                population: "228,416",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Rach Gia 26 Ecosystem", "url": "#ecosystem_maps/Vietnam_Rach_Gia_26_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Soc Trang",
+                country: "Vietnam",
+                lat: 9.600000381469728,
+                lng: 105.9719009399414,
+                population: "203,056",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Soc Trang 41 Ecosystem", "url": "#ecosystem_maps/Vietnam_Soc_Trang_41_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Tan An",
+                country: "Vietnam",
+                lat: 10.53219985961914,
+                lng: 106.4041976928711,
+                population: "145,120",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Tan An 28 Ecosystem", "url": "#ecosystem_maps/Vietnam_Tan_An_28_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Tan Uyen",
+                country: "Vietnam",
+                lat: 11.049500465393066,
+                lng: 106.75769805908205,
+                population: "466,053",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Tan Uyen 14 Ecosystem", "url": "#ecosystem_maps/Vietnam_Tan_Uyen_14_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Thai Binh",
+                country: "Vietnam",
+                lat: 20.44610023498535,
+                lng: 106.34220123291016,
+                population: "206,037",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Thai Binh 43 Ecosystem", "url": "#ecosystem_maps/Vietnam_Thai_Binh_43_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Thai Nguyen",
+                country: "Vietnam",
+                lat: 21.600000381469727,
+                lng: 105.8499984741211,
+                population: "340,403",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Thai Nguyen 44 Ecos...", "url": "#ecosystem_maps/Vietnam_Thai_Nguyen_44_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Thanh Hoa",
+                country: "Vietnam",
+                lat: 19.8075008392334,
+                lng: 105.77639770507812,
+                population: "359,910",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Thanh Hoa 42 Ecosystem", "url": "#ecosystem_maps/Vietnam_Thanh_Hoa_42_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Thu Dau Mot",
+                country: "Vietnam",
+                lat: 11.004199981689451,
+                lng: 106.6583023071289,
+                population: "336,705",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Thu Dau Mot 17 Ecos...", "url": "#ecosystem_maps/Vietnam_Thu_Dau_Mot_17_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Thuan An",
+                country: "Vietnam",
+                lat: 10.904999732971191,
+                lng: 106.69940185546876,
+                population: "618,984",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Thuan An 13 Ecosystem", "url": "#ecosystem_maps/Vietnam_Thuan_An_13_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Tu Son",
+                country: "Vietnam",
+                lat: 21.11590003967285,
+                lng: 105.95590209960938,
+                population: "196,404",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Tu Son 8 Ecosystem", "url": "#ecosystem_maps/Vietnam_Tu_Son_8_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Tuy Hoa",
+                country: "Vietnam",
+                lat: 13.086899757385254,
+                lng: 109.30860137939452,
+                population: "155,921",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Tuy Hoa 36 Ecosystem", "url": "#ecosystem_maps/Vietnam_Tuy_Hoa_36_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Tuyen Quang",
+                country: "Vietnam",
+                lat: 21.828100204467773,
+                lng: 105.2155990600586,
+                population: "232,230",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Tuyen Quang 47 Ecos...", "url": "#ecosystem_maps/Vietnam_Tuyen_Quang_47_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Viet Tri",
+                country: "Vietnam",
+                lat: 21.313600540161133,
+                lng: 105.39469909667967,
+                population: "315,850",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Viet Tri 35 Ecosystem", "url": "#ecosystem_maps/Vietnam_Viet_Tri_35_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Vinh",
+                country: "Vietnam",
+                lat: 18.67329978942871,
+                lng: 105.69219970703124,
+                population: "339,114",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Vinh 32 Ecosystem", "url": "#ecosystem_maps/Vietnam_Vinh_32_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            {
+                name: "Vung Tau",
+                country: "Vietnam",
+                lat: 10.404199600219728,
+                lng: 107.1417007446289,
+                population: "420,860",
+                csvMatched: true,
+                htmlCount: 1,
+                links: [{"name": "Vietnam Vung Tau 9 Ecosystem", "url": "#ecosystem_maps/Vietnam_Vung_Tau_9_ecosystem.html"}],
+                color: countryColors["Vietnam"] || '#666'
+            },
+            ];
+            
+            cities.forEach(function(city) {
+                var marker = L.circleMarker([city.lat, city.lng], {
+                    radius: city.csvMatched ? 10 : 8,
+                    fillColor: city.color,
+                    color: city.csvMatched ? '#fff' : '#666',
+                    weight: city.csvMatched ? 3 : 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+                
+                var matchBadge = city.csvMatched ? 
+                    '<span style="background: #4CAF50; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8em;">CSV ✓</span>' :
+                    '<span style="background: #FF9800; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8em;">EST</span>';
+                
+                var popupContent = `
+                    <div style="text-align: center; min-width: 200px;">
+                        <h3>${city.name}</h3>
+                        <p style="color: #666;">${city.country}</p>
+                        ${matchBadge}
+                        <br><br>
+                        <p><strong>Population:</strong> ${city.population}</p>
+                        <p><strong>HTML Files:</strong> ${city.htmlCount}</p>
+                        <p><strong>Coordinates:</strong> ${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}</p>
+                        <div style="margin-top: 15px;">`;
+                
+                city.links.forEach(function(link) {
+                    popupContent += `<a href="${link.url}" target="_blank" style="
+                        display: block;
+                        margin: 5px 0;
+                        padding: 8px 15px;
+                        background: #667eea;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-size: 0.9em;
+                    ">${link.name}</a>`;
+                });
+                
+                popupContent += `</div></div>`;
+                
+                marker.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'custom-popup'
+                });
+                
+                marker.cityData = city;
+                allMarkers.push(marker);
+                markerGroup.addLayer(marker);
+            });
+            
+            function filterMarkers() {
+                var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                var selectedCountry = document.getElementById('countryFilter').value;
+                
+                markerGroup.clearLayers();
+                
+                allMarkers.forEach(function(marker) {
+                    var city = marker.cityData;
+                    var matchesSearch = city.name.toLowerCase().includes(searchTerm) || 
+                                      city.country.toLowerCase().includes(searchTerm);
+                    var matchesCountry = !selectedCountry || city.country === selectedCountry;
+                    
+                    if (matchesSearch && matchesCountry) {
+                        markerGroup.addLayer(marker);
+                    }
+                });
+            }
+            
+            function filterByCountry() {
+                filterMarkers();
+            }
+            
+            if (allMarkers.length > 0) {
+                var group = new L.featureGroup(allMarkers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+            
+            console.log('🗺️ CSV-enhanced map loaded with ' + cities.length + ' cities');
+        </script>
+    </body>
+    </html>
+    
